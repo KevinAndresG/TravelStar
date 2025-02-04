@@ -46,6 +46,7 @@ form {
   flex-direction: column;
   row-gap: 15px;
   margin: 0 auto;
+  margin-top: 50px;
   margin-bottom: 20px;
   background: #e7e7e7;
   padding: 20px;

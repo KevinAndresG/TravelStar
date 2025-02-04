@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
-import { getReservations, getRooms, getHotels } from "../../localStorage";
+import {
+  getReservations,
+  getRooms,
+  getHotels,
+  getCurrentUser,
+} from "../../localStorage";
 import "./ReservationList.css";
 
 export default function ReservationList() {
   const [rooms, setRooms] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [reservations, setReservations] = useState([]);
+  const currentUser = getCurrentUser();
 
   useEffect(() => {
-    console.log("rooms: ", rooms);
     setRooms(getRooms());
-    console.log("hotels: ", hotels);
     setHotels(getHotels());
-    console.log("reservations: ", reservations);
-    setReservations(getReservations());
+    setReservations(getReservations(currentUser.id, hotels, rooms));
+    console.log("getReservations(): ", getReservations());
     return () => {};
   }, []);
 
@@ -30,32 +34,28 @@ export default function ReservationList() {
           return (
             <div key={reservation.id} className="reservation-card">
               <img
-                src={room?.image || hotel?.image || "/default-hotel.jpg"}
+                src={hotel?.image || "/default-hotel.jpg"}
                 alt={room?.roomType || hotel?.name}
               />
-              {/* Detalles de la Reserva */}
               <div className="details">
                 <h3>{hotel?.name}</h3>
                 <p>
                   <strong>Habitación:</strong> {room?.roomType}
                 </p>
                 <p>
-                  <strong>Huésped:</strong> {reservation.guestName} (
-                  {reservation.guestEmail})
+                  <strong>Check-in:</strong> {reservation?.checkInDate}
                 </p>
                 <p>
-                  <strong>Check-in:</strong> {reservation.checkInDate}
-                </p>
-                <p>
-                  <strong>Check-out:</strong> {reservation.checkOutDate}
+                  <strong>Check-out:</strong> {reservation?.checkOutDate}
                 </p>
                 <p>
                   <strong>Número de Huéspedes:</strong>{" "}
-                  {reservation.guestsCount}
+                  {reservation?.guestsCount}
                 </p>
                 <p className="contact">
                   <strong>Contacto de Emergencia:</strong>{" "}
-                  {reservation.emergencyContact}
+                  {reservation?.emergencyContact.fullName}-
+                  {reservation?.emergencyContact.phoneNumber}
                 </p>
               </div>
             </div>

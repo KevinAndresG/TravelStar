@@ -1,18 +1,24 @@
 import { useState } from "react";
-import { getHotels, saveHotels } from "../../localStorage";
+import {
+  getCurrentUser,
+  getHotelsByUser,
+  saveHotels,
+} from "../../localStorage";
 import "./HotelForm.css";
 
 export default function HotelForm() {
+  const currentUser = getCurrentUser();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
-  const [hotels, setHotels] = useState(getHotels());
+  const [hotels, setHotels] = useState(getHotelsByUser(currentUser.id));
   const [image, setImage] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newHotel = {
       id: Date.now(),
+      agentId: currentUser.id,
       name,
       address,
       city,

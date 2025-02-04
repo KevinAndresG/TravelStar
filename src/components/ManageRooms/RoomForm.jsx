@@ -1,15 +1,22 @@
 import { useState } from "react";
-import { getHotels, getRooms, saveRooms } from "../../localStorage";
+import {
+  getCurrentUser,
+  getHotelsByUser,
+  getRoomsByUser,
+  saveRooms,
+} from "../../localStorage";
 import "./RoomForm.css";
 
 export default function RoomForm() {
+  const currentUser = getCurrentUser();
   const [hotelId, setHotelId] = useState("");
   const [roomType, setRoomType] = useState("");
   const [baseCost, setBaseCost] = useState("");
   const [taxes, setTaxes] = useState("");
   const [location, setLocation] = useState("");
-  const [rooms, setRooms] = useState(getRooms());
-  const hotels = getHotels();
+  const [rooms, setRooms] = useState(getRoomsByUser(currentUser.id));
+  const hotels = getHotelsByUser(currentUser.id);
+  const [capacity, setCapacity] = useState(1);
   const [image, setImage] = useState(null);
 
   const handleImageChange = (e) => {
@@ -27,11 +34,13 @@ export default function RoomForm() {
     e.preventDefault();
     const newRoom = {
       id: Date.now(),
+      agentId: currentUser.id,
       hotelId,
       roomType,
       baseCost,
       taxes,
       location,
+      capacity,
       image: image || "default-room.jpg", // Usar imagen predeterminada si no se selecciona ninguna
       enabled: true,
     };
@@ -43,6 +52,7 @@ export default function RoomForm() {
     setBaseCost("");
     setTaxes("");
     setLocation("");
+    setCapacity(1);
     setImage(null); // Limpiar la imagen seleccionada
     alert("Habitación creada exitosamente.");
   };
@@ -99,6 +109,14 @@ export default function RoomForm() {
           placeholder="Ubicación"
         />
         <input
+          type="number"
+          min="1"
+          value={capacity}
+          onChange={(e) => setCapacity(parseInt(e.target.value))}
+          required
+          placeholder="Capacidad (personas)"
+        />
+        <input
           type="file"
           accept="image/*"
           placeholder="Imagen"
@@ -121,7 +139,8 @@ export default function RoomForm() {
                   borderRadius: "8px",
                 }}
               />
-              {room.roomType} - {room.location} ({hotel?.name})
+              {room.roomType} - {room.location} ({hotel?.name}) | Capacidad:{" "}
+              {room.capacity} personas
               <button
                 className="delete-button"
                 onClick={() => handleDelete(room.id)}
