@@ -5,7 +5,7 @@ import {
   getHotels,
   getCurrentUser,
 } from "../../localStorage";
-import "./ReservationList.css";
+import "./Reservationlist.css";
 
 export default function ReservationList() {
   const [rooms, setRooms] = useState([]);
